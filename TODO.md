@@ -5,7 +5,7 @@
 - [ ] La plataforma está completamente en español y usa la identidad TransControl con azul oscuro, azul eléctrico, blanco, grises claros, bordes ligeramente redondeados, sombras sutiles, iconografía consistente y tipografía legible.
 - [ ] La aplicación es responsive en computador, tablet y teléfono.
 - [ ] Existe una landing comercial en `/` con hero, problema, solución, funcionalidades, cómo funciona, beneficios, llamado a la acción y footer con logo, navegación, contacto demo y derechos reservados.
-- [ ] Existe `/login` con inicio de sesión real usando Manus OAuth y una indicación clara de que la demo requiere acceso.
+- [ ] Existe `/login` con campos de correo electrónico y contraseña, validación de credenciales demo y una indicación clara de que el acceso administra la flota de la empresa.
 - [ ] Existe `/consulta/:codigo` como portal público independiente del panel y solo muestra información autorizada del vehículo, conductor, empresa y servicio.
 - [ ] Existe `/manus-routes.json` con todas las rutas públicas, administrativas y dinámicas, sin incluir APIs ni assets.
 

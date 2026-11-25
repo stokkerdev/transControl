@@ -15,7 +15,7 @@ Platform configuration is readable and editable through `webdev.config`. Default
 
 ## Acceso demo
 
-Abre `/login` y selecciona **Transportes Andinos S.A.S. — Administrador · Datos de demostración**. Este acceso carga una sesión demo local para recorrer el panel sin credenciales reales. El botón **Iniciar con cuenta Manus** conserva el flujo OAuth del starter para una integración autenticada real.
+Abre `/login` y usa las credenciales demo de correo y contraseña que aparecen en el formulario. Este acceso carga una sesión demo local para recorrer el panel sin credenciales reales.
 
 ## Recorrido recomendado
 
@@ -23,7 +23,7 @@ Desde el dashboard puedes revisar KPIs, alertas y mantenimientos. En `/vehiculos
 
 ## Datos y arquitectura
 
-El frontend usa React, TypeScript, Wouter, Tailwind CSS y Lucide. El starter mantiene Express, tRPC, Manus OAuth y Drizzle ORM. `drizzle/schema.ts` contiene empresas, usuarios, vehículos, conductores, documentos, inspecciones, mantenimientos, fallas, asignaciones, evaluaciones, notificaciones y actividad; la migración inicial está en `drizzle/0001_charming_proemial_gods.sql`. Los datos de presentación son realistas y relacionados, y se conservan en `localStorage` para que el MVP sea recorrible aun sin cargar una sesión administrativa.
+El frontend usa React, TypeScript, Wouter, Tailwind CSS y Lucide. El starter mantiene Express, tRPC y Drizzle ORM; el formulario visible del MVP usa correo y contraseña demo. `drizzle/schema.ts` contiene empresas, usuarios, vehículos, conductores, documentos, inspecciones, mantenimientos, fallas, asignaciones, evaluaciones, notificaciones y actividad; la migración inicial está en `drizzle/0001_charming_proemial_gods.sql`. Los datos de presentación son realistas y relacionados, y se conservan en `localStorage` para que el MVP sea recorrible aun sin cargar una sesión administrativa.
 
 TransControl es una herramienta de apoyo a la gestión y prevención. No diagnostica automáticamente la seguridad mecánica ni certifica la habilitación de un vehículo; esas decisiones corresponden a personal competente y a las autoridades pertinentes.
 
@@ -36,3 +36,9 @@ pnpm db:push
 ```
 
 El runtime de Preview se declara en `webdev.config` con `pnpm dev` en el puerto 3000. El manifiesto de páginas está en `client/public/manus-routes.json`.
+
+## Flujo de acceso y consulta pública
+
+El personal de cada empresa entra al panel privado desde `/login` con correo electrónico y contraseña. En este MVP académico, las credenciales demo son `admin@transcontrol.demo` y `TransControl2026!`; la sesión se guarda localmente para recorrer la demostración. En una siguiente fase, este formulario debe conectarse a un servicio de autenticación del producto con contraseñas hasheadas, recuperación de cuenta, sesiones seguras y separación por empresa.
+
+Los pasajeros no necesitan iniciar sesión. Cada vehículo tiene un código QR único; al escanearlo, el navegador abre directamente una ruta como `/consulta/TC-TCT042`. Allí se muestran solamente datos públicos autorizados: placa, vehículo, estado documental general, última revisión, conductor y datos profesionales permitidos, empresa y canal oficial de contacto. No se exponen documentos privados, identificaciones, teléfonos personales ni información administrativa. Las opiniones se reciben como pendientes de moderación.

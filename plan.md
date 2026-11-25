@@ -4,7 +4,7 @@
 
 TransControl será un MVP SaaS navegable para apoyar la gestión preventiva de empresas de transporte público. La aplicación tendrá dos superficies relacionadas pero separadas: una experiencia pública comercial y de consulta por código, y un panel administrativo protegido para administrar la operación. El MVP usará datos ficticios realistas y persistentes en la base de datos administrada, con seed idempotente para que reinicios o despliegues no sobrescriban cambios posteriores.
 
-La primera versión cubrirá el recorrido de demostración completo: landing, login con Manus OAuth, dashboard, CRUD de vehículos y conductores, documentación y alertas, mantenimientos, asignaciones, reportes, notificaciones, configuración básica, ficha detallada de vehículo, perfil de conductor y portal público `/consulta/:codigo` con evaluación moderada. Todos los datos que se muestran en tarjetas, tablas y gráficas saldrán de la misma capa de datos para que las operaciones produzcan cambios visibles entre módulos.
+La primera versión cubrirá el recorrido de demostración completo: landing, login con correo electrónico y contraseña, dashboard, CRUD de vehículos y conductores, documentación y alertas, mantenimientos, asignaciones, reportes, notificaciones, configuración básica, ficha detallada de vehículo, perfil de conductor y portal público `/consulta/:codigo` con evaluación moderada. Todos los datos que se muestran en tarjetas, tablas y gráficas saldrán de la misma capa de datos para que las operaciones produzcan cambios visibles entre módulos.
 
 ## Arquitectura y estructura
 
@@ -18,7 +18,7 @@ La primera versión cubrirá el recorrido de demostración completo: landing, lo
 - `drizzle/`: migraciones aditivas y reproducibles.
 - `public/manus-routes.json`: manifiesto de rutas completo para Preview.
 
-Se conservará la autenticación Manus OAuth del starter y el nombre de cookie `webdev_app_session`. Las rutas de administración requerirán sesión; la ruta pública de consulta solo expondrá campos autorizados. Los roles de administrador, mantenimiento y conductor se almacenarán en la aplicación y limitarán mutaciones y datos sensibles.
+El MVP usa un acceso de demostración por correo electrónico y contraseña, con rutas de administración protegidas por una sesión local para la demo. La siguiente fase debe reemplazarla por autenticación de servidor con contraseñas hasheadas y sesiones seguras. Las rutas de administración requerirán sesión; la ruta pública de consulta solo expondrá campos autorizados. Los roles de administrador, mantenimiento y conductor se almacenarán en la aplicación y limitarán mutaciones y datos sensibles.
 
 ## Diseño visual
 
