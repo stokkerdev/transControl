@@ -1,44 +1,58 @@
 # TransControl
 
-React / Express / tRPC / Drizzle starter, adapted from the Sandbox web-db-user template.
-
-- `pnpm dev`: development server; honors `PORT` (default 3000).
-- `pnpm build` / `pnpm start`: build and serve `dist/index.js` and `dist/public/`.
-- `pnpm db:migrate`: apply checked-in migrations. `pnpm db:push`: generate and apply new schema changes.
-- `pnpm check` / `pnpm test`: types and application tests.
-
-Start with the Webdev skill's default-template guide. Platform login, storage, payments and service contracts live in its shared references; read the relevant capability before extending its helper.
-
-`server/_core/publicConfig.ts` exposes only named public runtime values. Private keys stay server-side. The platform serves managed `/manus-storage/` assets; the application does not register a second proxy.
-
-Platform configuration is readable and editable through `webdev.config`. Default settings are initial values, not enforced constraints. The agent may modify the files, commands and configuration or follow the flexible guide for another stack.
-
-## Acceso demo
-
-Abre `/login` y usa las credenciales demo de correo y contraseña que aparecen en el formulario. Este acceso carga una sesión demo local para recorrer el panel sin credenciales reales.
-
-## Recorrido recomendado
-
-Desde el dashboard puedes revisar KPIs, alertas y mantenimientos. En `/vehiculos` puedes buscar por placa, abrir la ficha rápida, registrar un vehículo y eliminarlo con confirmación. `/conductores` y `/mantenimientos` tienen formularios y cambios de estado que persisten en el navegador durante la demo. `/consulta/TC-TCT042` muestra el portal público asociado al QR de un vehículo, sin datos privados, e incluye una calificación pendiente de moderación.
-
-## Datos y arquitectura
-
-El frontend usa React, TypeScript, Wouter, Tailwind CSS y Lucide. El starter mantiene Express, tRPC y Drizzle ORM; el formulario visible del MVP usa correo y contraseña demo. `drizzle/schema.ts` contiene empresas, usuarios, vehículos, conductores, documentos, inspecciones, mantenimientos, fallas, asignaciones, evaluaciones, notificaciones y actividad; la migración inicial está en `drizzle/0001_charming_proemial_gods.sql`. Los datos de presentación son realistas y relacionados, y se conservan en `localStorage` para que el MVP sea recorrible aun sin cargar una sesión administrativa.
-
-TransControl es una herramienta de apoyo a la gestión y prevención. No diagnostica automáticamente la seguridad mecánica ni certifica la habilitación de un vehículo; esas decisiones corresponden a personal competente y a las autoridades pertinentes.
+Aplicación web local-first para la gestión operativa de una flota de transporte público. El MVP permite administrar vehículos, conductores, mantenimientos y asignaciones desde el navegador, sin depender de una base de datos para esas operaciones.
 
 ## Comandos
 
-```bash
-pnpm check
-pnpm build
-pnpm db:push
-```
+- `pnpm dev`: servidor de desarrollo; respeta `PORT` (por defecto 3000).
+- `pnpm build` / `pnpm start`: compilar y servir la aplicación.
+- `pnpm check`: comprobación de tipos TypeScript.
+- `pnpm test`: pruebas disponibles del proyecto.
+- `git diff --check`: detectar errores de espacios en el diff.
 
-El runtime de Preview se declara en `webdev.config` con `pnpm dev` en el puerto 3000. El manifiesto de páginas está en `client/public/manus-routes.json`.
+El starter conserva Express, tRPC y Drizzle/MySQL heredados, junto con `drizzle/schema.ts` y sus migraciones, pero los flujos operativos de este MVP no leen ni escriben esa base de datos. La fuente de verdad de vehículos, conductores, mantenimientos y asignaciones es el `localStorage` del navegador.
 
-## Flujo de acceso y consulta pública
+## Acceso demo
 
-El personal de cada empresa entra al panel privado desde `/login` con correo electrónico y contraseña. En este MVP académico, las credenciales demo son `admin@transcontrol.demo` y `TransControl2026!`; la sesión se guarda localmente para recorrer la demostración. En una siguiente fase, este formulario debe conectarse a un servicio de autenticación del producto con contraseñas hasheadas, recuperación de cuenta, sesiones seguras y separación por empresa.
+Abre `/login` y usa:
 
-Los pasajeros no necesitan iniciar sesión. Cada vehículo tiene un código QR único; al escanearlo, el navegador abre directamente una ruta como `/consulta/TC-TCT042`. Allí se muestran solamente datos públicos autorizados: placa, vehículo, estado documental general, última revisión, conductor y datos profesionales permitidos, empresa y canal oficial de contacto. No se exponen documentos privados, identificaciones, teléfonos personales ni información administrativa. Las opiniones se reciben como pendientes de moderación.
+- Correo: `admin@transcontrol.demo`
+- Contraseña: `TransControl2026!`
+
+La sesión de demostración también se conserva localmente en el navegador.
+
+## Gestión local-first
+
+Desde el panel autenticado:
+
+- `/vehiculos` permite registrar vehículos con placa, tipo, marca, modelo, año, capacidad, kilometraje y VIN. También permite consultar su ficha, eliminar registros y generar su QR.
+- `/conductores` permite registrar conductores con licencia, categoría, vencimiento, experiencia, teléfono y correo.
+- `/mantenimientos` permite programar actividades, filtrarlas por estado, cambiar su estado y eliminarlas.
+- `/asignaciones` permite vincular o desvincular un conductor de un vehículo. La aplicación evita que un conductor quede asignado a dos vehículos y mantiene sincronizados ambos registros.
+
+Las colecciones se guardan en estas claves locales: `transcontrol:vehicles`, `transcontrol:drivers`, `transcontrol:maintenances` y `transcontrol:session`. Por diseño, los cambios permanecen en el navegador y equipo donde se realizaron; no se sincronizan automáticamente con otros dispositivos ni constituyen un respaldo remoto. Limpiar los datos del sitio elimina la información local.
+
+## Flujo QR y consulta de pasajeros
+
+Cada vehículo tiene un código corto, por ejemplo `TC-TCT042`. Desde la ficha del vehículo, el administrador puede abrir **Ver QR público**, copiar el enlace o abrir la consulta. El QR contiene una URL relativa como `/consulta/TC-TCT042`.
+
+El pasajero escanea el código con la cámara del teléfono y entra directamente a `/consulta/:codigo`, sin iniciar sesión. El portal público toma el código, busca el vehículo en los datos disponibles del navegador y muestra únicamente la información autorizada para pasajeros: identificación pública del vehículo, estado general, empresa, datos profesionales permitidos del conductor asignado y canal oficial de contacto. No muestra documentos privados, identificaciones, teléfonos personales, correos privados, direcciones ni información administrativa.
+
+En una instalación completamente local, la consulta pública debe abrirse en el mismo origen y contexto donde estén disponibles los datos locales. Si el QR se escanea desde otro teléfono o dispositivo, ese dispositivo no comparte automáticamente el `localStorage` del administrador; para operar entre dispositivos se necesitaría posteriormente una API, sincronización o base de datos, algo que queda fuera del alcance actual.
+
+## Recorrido recomendado
+
+1. Inicia sesión en `/login`.
+2. Registra un vehículo y un conductor.
+3. Programa un mantenimiento.
+4. Asigna el conductor al vehículo.
+5. Recarga la página para comprobar que los cambios sobreviven.
+6. Abre la ficha del vehículo, genera el QR y entra a la consulta pública.
+
+El portal `/consulta/TC-TCT042` es público y no requiere login. Las evaluaciones de pasajeros, cuando están disponibles en el demo, quedan pendientes de moderación.
+
+## Rutas y configuración
+
+El manifiesto de páginas está en `client/public/manus-routes.json`. La configuración de Preview se declara mediante `webdev.config`. El logo oficial se encuentra en `client/public/transcontrol-logo.png` y su metadata en `app.config.ts`.
+
+TransControl es una herramienta de apoyo a la gestión y prevención. No diagnostica automáticamente la seguridad mecánica ni certifica la habilitación de un vehículo; esas decisiones corresponden a personal competente y a las autoridades pertinentes.
